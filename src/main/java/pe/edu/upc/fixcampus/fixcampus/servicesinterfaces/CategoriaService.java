@@ -1,0 +1,18 @@
+package pe.edu.upc.fixcampus.fixcampus.servicesinterfaces;
+
+import pe.edu.upc.fixcampus.fixcampus.entities.Categoria;
+
+import java.util.List;
+
+public interface CategoriaService {
+
+    List<Categoria> listar();
+
+    Categoria buscarPorId(Long id);
+
+    Categoria registrar(Categoria category);
+
+    Categoria actualizar(Long id, Categoria datos);
+
+    void eliminar(Long id);
+}
