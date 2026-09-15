@@ -36,6 +36,7 @@ public class ReporteServiceImpl implements ReporteService {
 
     @Override
     public List<Reporte> listar() {
+
         return reporteRepository.findAll();
     }
 
@@ -62,11 +63,13 @@ public class ReporteServiceImpl implements ReporteService {
 
     @Override
     public void eliminar(Long id) {
+
         reporteRepository.delete(buscarPorId(id));
     }
 
     @Override
     public List<Reporte> buscarPorEstado(String estado) {
+
         return reporteRepository.findByEstadoIgnoreCase(estado);
     }
 

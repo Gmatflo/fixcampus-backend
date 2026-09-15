@@ -10,9 +10,11 @@ import java.util.List;
 public class CategoriaServiceImpl implements CategoriaService {
     private final CategoriaRepository repository;
     public CategoriaServiceImpl(CategoriaRepository repository) {
+
         this.repository = repository;
     }
     public List<Categoria> listar(){
+
         return repository.findAll();
     }
     public Categoria buscarPorId(Long id) {
@@ -23,6 +25,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
    public Categoria registrar(Categoria categoria){
+
         return repository.save(categoria);
    }
 

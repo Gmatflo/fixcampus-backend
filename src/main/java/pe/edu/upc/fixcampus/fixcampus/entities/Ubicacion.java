@@ -28,16 +28,40 @@ public class Ubicacion {
     public Ubicacion() {
     }
 
-    public Long getIdUbicacion() { return idUbicacion; }
-    public void setIdUbicacion(Long idUbicacion) { this.idUbicacion = idUbicacion; }
-    public String getCampus() { return campus; }
-    public void setCampus(String campus) { this.campus = campus; }
-    public String getEdificio() { return edificio; }
-    public void setEdificio(String edificio) { this.edificio = edificio; }
-    public Integer getPiso() { return piso; }
-    public void setPiso(Integer piso) { this.piso = piso; }
-    public String getZona() { return zona; }
-    public void setZona(String zona) { this.zona = zona; }
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public Long getIdUbicacion() {
+        return idUbicacion;
+    }
+    public void setIdUbicacion(Long idUbicacion) {
+        this.idUbicacion = idUbicacion;
+    }
+    public String getCampus() {
+        return campus;
+    }
+    public void setCampus(String campus) {
+        this.campus = campus;
+    }
+    public String getEdificio() {
+        return edificio;
+    }
+    public void setEdificio(String edificio) {
+        this.edificio = edificio;
+    }
+    public Integer getPiso() {
+        return piso;
+    }
+    public void setPiso(Integer piso) {
+        this.piso = piso;
+    }
+    public String getZona() {
+        return zona;
+    }
+    public void setZona(String zona) {
+        this.zona = zona;
+    }
+    public String getTipo() {
+        return tipo;
+    }
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 }
