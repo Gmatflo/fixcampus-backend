@@ -2,6 +2,7 @@ services:
   - type: web
     name: fixcampus-backend
     runtime: docker
+    region: virginia
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
