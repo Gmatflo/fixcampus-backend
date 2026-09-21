@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import pe.edu.upc.fixcampus.fixcampus.entities.Usuario;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Optional<Usuario> findByCorreo(String correo);
     List<Usuario> findByEstadoIgnoreCase(String estado);
 }

@@ -3,6 +3,7 @@ package pe.edu.upc.fixcampus.fixcampus.controllers;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.fixcampus.fixcampus.dtos.CategoriaDTOInsert;
@@ -26,6 +27,7 @@ public class CategoriaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<List<CategoriaDTOList>> listar() {
         List<CategoriaDTOList> lista = service.listar()
                 .stream()
@@ -36,6 +38,7 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<CategoriaDTOList> buscarPorId(@PathVariable Long id) {
         Categoria categoria = service.buscarPorId(id);
         CategoriaDTOList response = modelMapper.map(categoria, CategoriaDTOList.class);
@@ -44,6 +47,7 @@ public class CategoriaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoriaDTOList> registrar(
             @Valid @RequestBody CategoriaDTOInsert dto) {
 
@@ -61,6 +65,7 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoriaDTOList> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody CategoriaDTOInsert dto) {
@@ -73,6 +78,7 @@ public class CategoriaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();

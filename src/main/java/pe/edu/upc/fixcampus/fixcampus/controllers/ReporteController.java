@@ -2,6 +2,7 @@ package pe.edu.upc.fixcampus.fixcampus.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOInsert;
@@ -23,6 +24,7 @@ public class ReporteController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<List<ReporteDTOList>> listar(
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) String categoria) {
@@ -40,11 +42,13 @@ public class ReporteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<ReporteDTOList> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(convertirDto(service.buscarPorId(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<ReporteDTOList> registrar(@Valid @RequestBody ReporteDTOInsert dto) {
         Reporte guardado = service.registrar(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -55,6 +59,7 @@ public class ReporteController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<ReporteDTOList> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody ReporteDTOInsert dto) {
@@ -62,6 +67,7 @@ public class ReporteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
