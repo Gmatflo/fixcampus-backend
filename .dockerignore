@@ -1,5 +1,4 @@
 target/*.original
 .git
 .idea
-.mvn
 *.iml
