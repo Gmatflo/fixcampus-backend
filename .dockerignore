@@ -2,5 +2,4 @@ target/*.original
 .git
 .idea
 .mvn
-src
 *.iml
