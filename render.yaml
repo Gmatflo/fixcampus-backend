@@ -2,6 +2,7 @@ services:
   - type: web
     name: fixcampus-backend
     runtime: docker
+    plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /v3/api-docs
