@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOInsert;
 import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorMesDTO;
+import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorCampusDTO;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOList;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
 import pe.edu.upc.fixcampus.fixcampus.servicesinterfaces.ReporteService;
@@ -25,11 +28,12 @@ public class ReporteController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar reportes", description = "Sin filtros lista todos. Con estado filtra por estado; con categoria busca reportes de esa categoría; con correo busca los creados por ese usuario. Si se envían varios filtros, se aplica primero estado, luego categoria y luego correo.")
     @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<List<ReporteDTOList>> listar(
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) String categoria,
-            @RequestParam(required = false) String correo) {
+            @Parameter(description = "Estado del reporte, por ejemplo ABIERTO") @RequestParam(required = false) String estado,
+            @Parameter(description = "Nombre exacto de la categoría; consulta con JOIN") @RequestParam(required = false) String categoria,
+            @Parameter(description = "Correo exacto del usuario reportante; consulta con JOIN") @RequestParam(required = false) String correo) {
 
         List<Reporte> reportes;
         if (estado != null && !estado.isBlank()) {
@@ -46,9 +50,18 @@ public class ReporteController {
     }
 
     @GetMapping("/estadisticas/por-usuario-mes")
+    @Operation(summary = "Contar incidencias por usuario y mes", description = "Agrupa los reportes por usuario, año y mes de creación, y cuenta cuántos hizo cada uno. Consulta con JOIN. Solo para administradores.")
     @PreAuthorize("hasRole('ADMIN')")
     public List<IncidenciasPorMesDTO> incidenciasPorUsuarioYMes() {
         return service.contarPorUsuarioYMes();
+    }
+
+    @GetMapping("/estadisticas/por-campus")
+    @Operation(summary = "Contar incidencias por campus y estado", description = "Une reportes con ubicaciones y cuenta cuántos reportes del estado indicado hay en cada campus. Solo para administradores.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<IncidenciasPorCampusDTO> incidenciasPorCampus(
+            @Parameter(description = "Estado del reporte, por ejemplo ABIERTO") @RequestParam String estado) {
+        return service.contarPorCampusYEstado(estado);
     }
 
     @GetMapping("/{id}")

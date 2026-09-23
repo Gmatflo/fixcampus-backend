@@ -24,6 +24,13 @@ class ApiSwaggerTests {
         HttpClient client = HttpClient.newHttpClient();
         String base = "http://localhost:" + port;
 
+        HttpResponse<String> inicio = client.send(
+                HttpRequest.newBuilder(URI.create(base + "/")).GET().build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertThat(inicio.statusCode()).isEqualTo(302);
+        assertThat(inicio.headers().firstValue("Location").orElseThrow())
+                .endsWith("/swagger-ui/index.html");
+
         HttpResponse<String> docs = client.send(
                 HttpRequest.newBuilder(URI.create(base + "/v3/api-docs")).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -33,6 +40,10 @@ class ApiSwaggerTests {
                 "/api/attachments", "/api/recomendaciones"}) {
             assertThat(docs.body()).contains(ruta);
         }
+        assertThat(docs.body()).contains("Contar incidencias por usuario y mes");
+        assertThat(docs.body()).contains("Nombre exacto de la categoría; consulta con JOIN");
+        assertThat(docs.body()).contains("/api/reports/estadisticas/por-campus");
+        assertThat(docs.body()).contains("/api/comments/estadisticas/por-reporte");
 
         HttpResponse<String> login = client.send(
                 HttpRequest.newBuilder(URI.create(base + "/login"))

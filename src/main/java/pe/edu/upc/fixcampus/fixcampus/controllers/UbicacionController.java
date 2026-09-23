@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +20,9 @@ public class UbicacionController {
     public UbicacionController(UbicacionRepository repository) { this.repository = repository; }
 
     @GetMapping
+    @Operation(summary = "Listar ubicaciones", description = "Si se indica campus, busca ubicaciones cuyo campus contenga ese texto, sin distinguir mayúsculas.")
     @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
-    public List<Ubicacion> listar(@RequestParam(required = false) String campus) {
+    public List<Ubicacion> listar(@Parameter(description = "Parte del nombre del campus") @RequestParam(required = false) String campus) {
         return campus == null || campus.isBlank() ? repository.findAll()
                 : repository.findByCampusContainingIgnoreCase(campus);
     }
