@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pe.edu.upc.fixcampus.fixcampus.entities.Categoria;
+import pe.edu.upc.fixcampus.fixcampus.entities.Comentario;
 import pe.edu.upc.fixcampus.fixcampus.entities.Ubicacion;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
 import pe.edu.upc.fixcampus.fixcampus.entities.Rol;
 import pe.edu.upc.fixcampus.fixcampus.entities.Usuario;
 import pe.edu.upc.fixcampus.fixcampus.repositories.CategoriaRepository;
+import pe.edu.upc.fixcampus.fixcampus.repositories.ComentarioRepository;
 import pe.edu.upc.fixcampus.fixcampus.repositories.UbicacionRepository;
 import pe.edu.upc.fixcampus.fixcampus.repositories.ReporteRepository;
 import pe.edu.upc.fixcampus.fixcampus.repositories.RolRepository;
@@ -35,6 +37,9 @@ class ReporteRepositoryTests {
 
     @Autowired
     private ReporteRepository reportRepository;
+
+    @Autowired
+    private ComentarioRepository commentRepository;
 
     @Test
     void debeBuscarReportePorEstadoYConJoinDeCategoria() {
@@ -91,5 +96,31 @@ class ReporteRepositoryTests {
                     assertThat(resumen.getMes()).isEqualTo(LocalDateTime.now().getMonthValue());
                     assertThat(resumen.getCantidad()).isEqualTo(1L);
                 });
+
+        assertThat(reportRepository.contarPorCampusYEstado("abierto"))
+                .singleElement()
+                .satisfies(resumen -> {
+                    assertThat(resumen.getCampus()).isEqualTo("UPC San Miguel");
+                    assertThat(resumen.getCantidad()).isEqualTo(1L);
+                });
+        assertThat(reportRepository.contarPorCampusYEstado("CERRADO")).isEmpty();
+
+        for (String texto : new String[] {"Revisar lámpara", "Sigue sin funcionar"}) {
+            Comentario comentario = new Comentario();
+            comentario.setReporte(report);
+            comentario.setUsuario(user);
+            comentario.setTextoComentario(texto);
+            comentario.setFechaComentario(LocalDateTime.now());
+            commentRepository.save(comentario);
+        }
+
+        assertThat(commentRepository.contarPorReporteYCorreo("MATIAS.PRUEBA@UPC.EDU.PE"))
+                .singleElement()
+                .satisfies(resumen -> {
+                    assertThat(resumen.getReporteId()).isEqualTo(report.getIdReporte());
+                    assertThat(resumen.getTituloReporte()).isEqualTo("Luz apagada");
+                    assertThat(resumen.getCantidad()).isEqualTo(2L);
+                });
+        assertThat(commentRepository.contarPorReporteYCorreo("otro@upc.edu.pe")).isEmpty();
     }
 }

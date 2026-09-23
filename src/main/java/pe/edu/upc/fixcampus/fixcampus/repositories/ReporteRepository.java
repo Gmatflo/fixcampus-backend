@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
 import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorMesDTO;
+import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorCampusDTO;
 
 import java.util.List;
 
@@ -32,4 +33,11 @@ public interface ReporteRepository extends JpaRepository<Reporte, Long> {
             "year(r.fechaCreacion), month(r.fechaCreacion) " +
             "order by year(r.fechaCreacion), month(r.fechaCreacion), u.nombre")
     List<IncidenciasPorMesDTO> contarPorUsuarioYMes();
+
+    // Consulta 11, con JOIN: cuenta las incidencias de cada campus según su estado.
+    @Query("select new pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorCampusDTO(" +
+            "u.campus, count(r)) from Reporte r join r.ubicacion u " +
+            "where lower(r.estado) = lower(:estado) " +
+            "group by u.campus order by count(r) desc")
+    List<IncidenciasPorCampusDTO> contarPorCampusYEstado(@Param("estado") String estado);
 }

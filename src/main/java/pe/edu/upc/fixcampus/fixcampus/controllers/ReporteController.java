@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOInsert;
 import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorMesDTO;
+import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorCampusDTO;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOList;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
 import pe.edu.upc.fixcampus.fixcampus.servicesinterfaces.ReporteService;
@@ -53,6 +54,14 @@ public class ReporteController {
     @PreAuthorize("hasRole('ADMIN')")
     public List<IncidenciasPorMesDTO> incidenciasPorUsuarioYMes() {
         return service.contarPorUsuarioYMes();
+    }
+
+    @GetMapping("/estadisticas/por-campus")
+    @Operation(summary = "Contar incidencias por campus y estado", description = "Une reportes con ubicaciones y cuenta cuántos reportes del estado indicado hay en cada campus. Solo para administradores.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<IncidenciasPorCampusDTO> incidenciasPorCampus(
+            @Parameter(description = "Estado del reporte, por ejemplo ABIERTO") @RequestParam String estado) {
+        return service.contarPorCampusYEstado(estado);
     }
 
     @GetMapping("/{id}")
