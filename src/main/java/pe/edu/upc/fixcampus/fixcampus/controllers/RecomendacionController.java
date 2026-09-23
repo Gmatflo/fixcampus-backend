@@ -4,51 +4,51 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pe.edu.upc.fixcampus.fixcampus.dtos.RecomendacionIADTO;
-import pe.edu.upc.fixcampus.fixcampus.entities.RecomendacionIA;
+import pe.edu.upc.fixcampus.fixcampus.dtos.RecomendacionDTO;
+import pe.edu.upc.fixcampus.fixcampus.entities.Recomendacion;
 import pe.edu.upc.fixcampus.fixcampus.exceptions.ResourceNotFoundException;
-import pe.edu.upc.fixcampus.fixcampus.repositories.RecomendacionIARepository;
+import pe.edu.upc.fixcampus.fixcampus.repositories.RecomendacionRepository;
 import pe.edu.upc.fixcampus.fixcampus.repositories.ReporteRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/recommendations")
+@RequestMapping("/api/recomendaciones")
 @PreAuthorize("hasRole('ADMIN')")
-public class RecomendacionIAController {
-    private final RecomendacionIARepository repository;
+public class RecomendacionController {
+    private final RecomendacionRepository repository;
     private final ReporteRepository reporteRepository;
 
-    public RecomendacionIAController(RecomendacionIARepository repository,
+    public RecomendacionController(RecomendacionRepository repository,
                                      ReporteRepository reporteRepository) {
         this.repository = repository;
         this.reporteRepository = reporteRepository;
     }
 
     @GetMapping
-    public List<RecomendacionIADTO> listar() {
+    public List<RecomendacionDTO> listar() {
         return repository.findAll().stream().map(this::convertir).toList();
     }
 
     @GetMapping("/{id}")
-    public RecomendacionIADTO buscar(@PathVariable Long id) { return convertir(buscarEntidad(id)); }
+    public RecomendacionDTO buscar(@PathVariable Long id) { return convertir(buscarEntidad(id)); }
 
     @PostMapping
-    public ResponseEntity<RecomendacionIADTO> crear(@Valid @RequestBody RecomendacionIADTO datos) {
+    public ResponseEntity<RecomendacionDTO> crear(@Valid @RequestBody RecomendacionDTO datos) {
         if (repository.existsByReporte_IdReporte(datos.getReporteId())) {
             throw new IllegalArgumentException("Este reporte ya tiene una recomendación");
         }
-        RecomendacionIA recomendacion = new RecomendacionIA();
+        Recomendacion recomendacion = new Recomendacion();
         copiarDatos(recomendacion, datos);
-        recomendacion.setFechaAnalisis(LocalDateTime.now());
+        recomendacion.setFechaRecomendacion(LocalDateTime.now());
         return ResponseEntity.status(201).body(convertir(repository.save(recomendacion)));
     }
 
     @PutMapping("/{id}")
-    public RecomendacionIADTO actualizar(@PathVariable Long id,
-                                         @Valid @RequestBody RecomendacionIADTO datos) {
-        RecomendacionIA recomendacion = buscarEntidad(id);
+    public RecomendacionDTO actualizar(@PathVariable Long id,
+                                         @Valid @RequestBody RecomendacionDTO datos) {
+        Recomendacion recomendacion = buscarEntidad(id);
         if (!recomendacion.getReporte().getIdReporte().equals(datos.getReporteId())
                 && repository.existsByReporte_IdReporte(datos.getReporteId())) {
             throw new IllegalArgumentException("Este reporte ya tiene una recomendación");
@@ -63,12 +63,12 @@ public class RecomendacionIAController {
         return ResponseEntity.noContent().build();
     }
 
-    private RecomendacionIA buscarEntidad(Long id) {
+    private Recomendacion buscarEntidad(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Recomendación no encontrada"));
     }
 
-    private void copiarDatos(RecomendacionIA recomendacion, RecomendacionIADTO datos) {
+    private void copiarDatos(Recomendacion recomendacion, RecomendacionDTO datos) {
         recomendacion.setReporte(reporteRepository.findById(datos.getReporteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado")));
         recomendacion.setTituloSugerido(datos.getTituloSugerido());
@@ -77,15 +77,15 @@ public class RecomendacionIAController {
         recomendacion.setJustificacion(datos.getJustificacion());
     }
 
-    private RecomendacionIADTO convertir(RecomendacionIA recomendacion) {
-        RecomendacionIADTO dto = new RecomendacionIADTO();
-        dto.setIdAnalisis(recomendacion.getIdAnalisis());
+    private RecomendacionDTO convertir(Recomendacion recomendacion) {
+        RecomendacionDTO dto = new RecomendacionDTO();
+        dto.setIdRecomendacion(recomendacion.getIdRecomendacion());
         dto.setReporteId(recomendacion.getReporte().getIdReporte());
         dto.setTituloSugerido(recomendacion.getTituloSugerido());
         dto.setResumen(recomendacion.getResumen());
         dto.setPrioridadSugerida(recomendacion.getPrioridadSugerida());
         dto.setJustificacion(recomendacion.getJustificacion());
-        dto.setFechaAnalisis(recomendacion.getFechaAnalisis());
+        dto.setFechaRecomendacion(recomendacion.getFechaRecomendacion());
         return dto;
     }
 }

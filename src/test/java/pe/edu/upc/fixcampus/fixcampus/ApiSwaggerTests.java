@@ -30,7 +30,7 @@ class ApiSwaggerTests {
         assertThat(docs.statusCode()).isEqualTo(200);
         for (String ruta : new String[] {"/api/categories", "/api/reports", "/api/users",
                 "/api/roles", "/api/locations", "/api/comments",
-                "/api/attachments", "/api/recommendations"}) {
+                "/api/attachments", "/api/recomendaciones"}) {
             assertThat(docs.body()).contains(ruta);
         }
 

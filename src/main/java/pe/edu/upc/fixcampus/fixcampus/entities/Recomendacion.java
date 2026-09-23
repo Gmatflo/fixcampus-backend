@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "recomendacion_ia")
-public class RecomendacionIA {
+@Table(name = "recomendacion")
+public class Recomendacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_analisis")
-    private Long idAnalisis;
+    @Column(name = "id_recomendacion")
+    private Long idRecomendacion;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "id_reporte", nullable = false, unique = true)
@@ -28,11 +28,11 @@ public class RecomendacionIA {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String justificacion;
 
-    @Column(name = "fecha_analisis", nullable = false)
-    private LocalDateTime fechaAnalisis;
+    @Column(name = "fecha_recomendacion", nullable = false)
+    private LocalDateTime fechaRecomendacion;
 
-    public Long getIdAnalisis() { return idAnalisis; }
-    public void setIdAnalisis(Long idAnalisis) { this.idAnalisis = idAnalisis; }
+    public Long getIdRecomendacion() { return idRecomendacion; }
+    public void setIdRecomendacion(Long idRecomendacion) { this.idRecomendacion = idRecomendacion; }
     public Reporte getReporte() { return reporte; }
     public void setReporte(Reporte reporte) { this.reporte = reporte; }
     public String getTituloSugerido() { return tituloSugerido; }
@@ -43,6 +43,6 @@ public class RecomendacionIA {
     public void setPrioridadSugerida(String prioridadSugerida) { this.prioridadSugerida = prioridadSugerida; }
     public String getJustificacion() { return justificacion; }
     public void setJustificacion(String justificacion) { this.justificacion = justificacion; }
-    public LocalDateTime getFechaAnalisis() { return fechaAnalisis; }
-    public void setFechaAnalisis(LocalDateTime fechaAnalisis) { this.fechaAnalisis = fechaAnalisis; }
+    public LocalDateTime getFechaRecomendacion() { return fechaRecomendacion; }
+    public void setFechaRecomendacion(LocalDateTime fechaRecomendacion) { this.fechaRecomendacion = fechaRecomendacion; }
 }
