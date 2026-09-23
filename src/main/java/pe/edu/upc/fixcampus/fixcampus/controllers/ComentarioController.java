@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +32,8 @@ public class ComentarioController {
     }
 
     @GetMapping
-    public List<ComentarioDTO> listar(@RequestParam(required = false) Long reporteId) {
+    @Operation(summary = "Listar comentarios", description = "Si se indica reporteId, muestra solo los comentarios de ese reporte. Solo para administradores.")
+    public List<ComentarioDTO> listar(@Parameter(description = "ID del reporte del que se quieren ver comentarios") @RequestParam(required = false) Long reporteId) {
         List<Comentario> lista = reporteId == null ? repository.findAll()
                 : repository.findByReporte_IdReporte(reporteId);
         return lista.stream().map(this::convertir).toList();

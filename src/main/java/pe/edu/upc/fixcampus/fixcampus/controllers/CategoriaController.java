@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +29,10 @@ public class CategoriaController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar categorías", description = "Si se indica nombre, busca categorías que contengan ese texto, sin distinguir mayúsculas.")
     @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
-    public ResponseEntity<List<CategoriaDTOList>> listar(@RequestParam(required = false) String nombre) {
+    public ResponseEntity<List<CategoriaDTOList>> listar(
+            @Parameter(description = "Parte del nombre de la categoría") @RequestParam(required = false) String nombre) {
         List<Categoria> categorias = nombre == null || nombre.isBlank()
                 ? service.listar() : service.buscarPorNombre(nombre);
         List<CategoriaDTOList> lista = categorias

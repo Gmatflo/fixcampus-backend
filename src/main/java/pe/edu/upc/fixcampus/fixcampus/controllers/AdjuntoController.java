@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +28,8 @@ public class AdjuntoController {
     }
 
     @GetMapping
-    public List<AdjuntoDTO> listar(@RequestParam(required = false) String tipoArchivo) {
+    @Operation(summary = "Listar adjuntos", description = "Si se indica tipoArchivo, busca adjuntos cuyo tipo contenga ese texto, sin distinguir mayúsculas. Solo para administradores.")
+    public List<AdjuntoDTO> listar(@Parameter(description = "Parte del tipo de archivo, por ejemplo pdf") @RequestParam(required = false) String tipoArchivo) {
         List<Adjunto> lista = tipoArchivo == null || tipoArchivo.isBlank() ? repository.findAll()
                 : repository.findByTipoArchivoContainingIgnoreCase(tipoArchivo);
         return lista.stream().map(this::convertir).toList();

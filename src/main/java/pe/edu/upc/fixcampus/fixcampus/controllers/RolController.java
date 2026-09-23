@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +20,9 @@ public class RolController {
     public RolController(RolRepository repository) { this.repository = repository; }
 
     @GetMapping
+    @Operation(summary = "Listar roles", description = "Si se indica nombre, busca roles que contengan ese texto, sin distinguir mayúsculas.")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Rol> listar(@RequestParam(required = false) String nombre) {
+    public List<Rol> listar(@Parameter(description = "Parte del nombre del rol") @RequestParam(required = false) String nombre) {
         return nombre == null || nombre.isBlank() ? repository.findAll()
                 : repository.findByNombreContainingIgnoreCase(nombre);
     }

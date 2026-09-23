@@ -1,5 +1,7 @@
 package pe.edu.upc.fixcampus.fixcampus.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +34,8 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<UsuarioDTO> listar(@RequestParam(required = false) String estado) {
+    @Operation(summary = "Listar usuarios", description = "Si se indica estado, muestra solo los usuarios con ese estado, sin distinguir mayúsculas. Solo para administradores.")
+    public List<UsuarioDTO> listar(@Parameter(description = "Estado del usuario, por ejemplo ACTIVO") @RequestParam(required = false) String estado) {
         List<Usuario> usuarios = estado == null || estado.isBlank() ? repository.findAll()
                 : repository.findByEstadoIgnoreCase(estado);
         return usuarios.stream().map(this::convertir).toList();

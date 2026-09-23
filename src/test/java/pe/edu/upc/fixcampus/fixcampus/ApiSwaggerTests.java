@@ -33,6 +33,8 @@ class ApiSwaggerTests {
                 "/api/attachments", "/api/recomendaciones"}) {
             assertThat(docs.body()).contains(ruta);
         }
+        assertThat(docs.body()).contains("Contar incidencias por usuario y mes");
+        assertThat(docs.body()).contains("Nombre exacto de la categoría; consulta con JOIN");
 
         HttpResponse<String> login = client.send(
                 HttpRequest.newBuilder(URI.create(base + "/login"))
