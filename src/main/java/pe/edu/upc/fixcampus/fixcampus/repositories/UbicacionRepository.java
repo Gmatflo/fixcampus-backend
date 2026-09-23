@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface UbicacionRepository extends JpaRepository<Ubicacion, Long> {
+    // Consulta 3: encuentra ubicaciones de un campus, aunque se escriba solo una parte.
     List<Ubicacion> findByCampusContainingIgnoreCase(String campus);
 }

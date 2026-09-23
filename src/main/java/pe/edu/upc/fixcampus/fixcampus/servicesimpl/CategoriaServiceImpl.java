@@ -17,6 +17,9 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         return repository.findAll();
     }
+    public List<Categoria> buscarPorNombre(String nombre) {
+        return repository.findByNombreContainingIgnoreCase(nombre);
+    }
     public Categoria buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(

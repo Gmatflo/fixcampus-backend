@@ -80,5 +80,16 @@ class ReporteRepositoryTests {
         assertThat(reportRepository.findByNombreCategoria("limpieza de prueba"))
                 .extracting(Reporte::getTitulo)
                 .containsExactly("Luz apagada");
+        assertThat(reportRepository.findByCorreoReportante("MATIAS.PRUEBA@UPC.EDU.PE"))
+                .extracting(Reporte::getTitulo)
+                .containsExactly("Luz apagada");
+        assertThat(reportRepository.contarPorUsuarioYMes())
+                .singleElement()
+                .satisfies(resumen -> {
+                    assertThat(resumen.getUsuarioId()).isEqualTo(user.getIdUsuario());
+                    assertThat(resumen.getAnio()).isEqualTo(LocalDateTime.now().getYear());
+                    assertThat(resumen.getMes()).isEqualTo(LocalDateTime.now().getMonthValue());
+                    assertThat(resumen.getCantidad()).isEqualTo(1L);
+                });
     }
 }

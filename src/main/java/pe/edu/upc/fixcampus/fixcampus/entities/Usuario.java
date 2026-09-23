@@ -46,6 +46,7 @@ public class Usuario {
     public Rol getRol() {
         return rol;
     }
+
     public void setRol(Rol rol) {
         this.rol = rol;
     }

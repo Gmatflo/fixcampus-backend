@@ -2,6 +2,7 @@ package pe.edu.upc.fixcampus.fixcampus.servicesimpl;
 
 import org.springframework.stereotype.Service;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOInsert;
+import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorMesDTO;
 import pe.edu.upc.fixcampus.fixcampus.entities.Categoria;
 import pe.edu.upc.fixcampus.fixcampus.entities.Ubicacion;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
@@ -76,6 +77,16 @@ public class ReporteServiceImpl implements ReporteService {
     @Override
     public List<Reporte> buscarPorCategoria(String nombreCategoria) {
         return reporteRepository.findByNombreCategoria(nombreCategoria);
+    }
+
+    @Override
+    public List<Reporte> buscarPorCorreoReportante(String correo) {
+        return reporteRepository.findByCorreoReportante(correo);
+    }
+
+    @Override
+    public List<IncidenciasPorMesDTO> contarPorUsuarioYMes() {
+        return reporteRepository.contarPorUsuarioYMes();
     }
 
     private void copiarDatos(Reporte reporte, ReporteDTOInsert dto) {

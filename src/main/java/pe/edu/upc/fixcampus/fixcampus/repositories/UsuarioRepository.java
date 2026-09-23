@@ -10,5 +10,6 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByCorreo(String correo);
+    // Consulta 4: lista usuarios según su estado, por ejemplo ACTIVO.
     List<Usuario> findByEstadoIgnoreCase(String estado);
 }

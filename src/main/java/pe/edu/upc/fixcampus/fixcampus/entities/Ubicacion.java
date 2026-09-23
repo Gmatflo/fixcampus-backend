@@ -1,6 +1,8 @@
 package pe.edu.upc.fixcampus.fixcampus.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "ubicacion")
@@ -11,17 +13,24 @@ public class Ubicacion {
     @Column(name = "id_ubicacion")
     private Long idUbicacion;
 
+    @NotBlank
+    @Size(max = 100)
     @Column(nullable = false, length = 100)
     private String campus;
 
+    @NotBlank
+    @Size(max = 100)
     @Column(nullable = false, length = 100)
     private String edificio;
 
     private Integer piso;
 
+    @Size(max = 150)
     @Column(length = 150)
     private String zona;
 
+    @NotBlank
+    @Size(max = 50)
     @Column(nullable = false, length = 50)
     private String tipo;
 

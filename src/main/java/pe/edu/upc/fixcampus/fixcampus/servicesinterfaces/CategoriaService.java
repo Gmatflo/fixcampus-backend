@@ -7,6 +7,7 @@ import java.util.List;
 public interface CategoriaService {
 
     List<Categoria> listar();
+    List<Categoria> buscarPorNombre(String nombre);
 
     Categoria buscarPorId(Long id);
 

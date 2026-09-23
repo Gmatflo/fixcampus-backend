@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface AdjuntoRepository extends JpaRepository<Adjunto, Long> {
+    // Consulta 5: busca archivos adjuntos por tipo (imagen, PDF, etc.).
     List<Adjunto> findByTipoArchivoContainingIgnoreCase(String tipoArchivo);
 }

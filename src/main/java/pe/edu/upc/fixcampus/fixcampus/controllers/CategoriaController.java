@@ -28,8 +28,10 @@ public class CategoriaController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
-    public ResponseEntity<List<CategoriaDTOList>> listar() {
-        List<CategoriaDTOList> lista = service.listar()
+    public ResponseEntity<List<CategoriaDTOList>> listar(@RequestParam(required = false) String nombre) {
+        List<Categoria> categorias = nombre == null || nombre.isBlank()
+                ? service.listar() : service.buscarPorNombre(nombre);
+        List<CategoriaDTOList> lista = categorias
                 .stream()
                 .map(categoria -> modelMapper.map(categoria, CategoriaDTOList.class))
                 .toList();

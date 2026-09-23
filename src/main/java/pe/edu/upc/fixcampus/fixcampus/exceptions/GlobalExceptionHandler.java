@@ -3,6 +3,7 @@ package pe.edu.upc.fixcampus.fixcampus.exceptions;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -56,5 +57,17 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleRelatedData(
+            DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                "No se puede guardar o eliminar porque el dato está en uso o ya existe",
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }

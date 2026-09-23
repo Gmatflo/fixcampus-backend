@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOInsert;
+import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorMesDTO;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOList;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
 import pe.edu.upc.fixcampus.fixcampus.servicesinterfaces.ReporteService;
@@ -27,18 +28,27 @@ public class ReporteController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
     public ResponseEntity<List<ReporteDTOList>> listar(
             @RequestParam(required = false) String estado,
-            @RequestParam(required = false) String categoria) {
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String correo) {
 
         List<Reporte> reportes;
         if (estado != null && !estado.isBlank()) {
             reportes = service.buscarPorEstado(estado);
         } else if (categoria != null && !categoria.isBlank()) {
             reportes = service.buscarPorCategoria(categoria);
+        } else if (correo != null && !correo.isBlank()) {
+            reportes = service.buscarPorCorreoReportante(correo);
         } else {
             reportes = service.listar();
         }
 
         return ResponseEntity.ok(reportes.stream().map(this::convertirDto).toList());
+    }
+
+    @GetMapping("/estadisticas/por-usuario-mes")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<IncidenciasPorMesDTO> incidenciasPorUsuarioYMes() {
+        return service.contarPorUsuarioYMes();
     }
 
     @GetMapping("/{id}")
