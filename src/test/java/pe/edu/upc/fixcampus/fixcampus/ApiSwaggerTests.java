@@ -24,6 +24,13 @@ class ApiSwaggerTests {
         HttpClient client = HttpClient.newHttpClient();
         String base = "http://localhost:" + port;
 
+        HttpResponse<String> inicio = client.send(
+                HttpRequest.newBuilder(URI.create(base + "/")).GET().build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertThat(inicio.statusCode()).isEqualTo(302);
+        assertThat(inicio.headers().firstValue("Location").orElseThrow())
+                .endsWith("/swagger-ui/index.html");
+
         HttpResponse<String> docs = client.send(
                 HttpRequest.newBuilder(URI.create(base + "/v3/api-docs")).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
