@@ -26,9 +26,18 @@ public class RecomendacionController {
         this.reporteRepository = reporteRepository;
     }
 
-    @GetMapping
-    public List<RecomendacionDTO> listar() {
-        return repository.findAll().stream().map(this::convertir).toList();
+   @GetMapping
+    public List<RecomendacionDTO> listar(@RequestParam(required = false) String prioridad) {
+        List<Recomendacion> lista = prioridad == null || prioridad.isBlank()
+                ? repository.findAll()
+                : repository.findByPrioridadSugeridaIgnoreCase(prioridad);
+        return lista.stream().map(this::convertir).toList();
+    }
+
+    @GetMapping("/por-categoria")
+    public List<RecomendacionDTO> listarPorCategoria(@RequestParam String nombre) {
+        return repository.findByCategoriaDelReporte(nombre)
+                .stream().map(this::convertir).toList();
     }
 
     @GetMapping("/{id}")
