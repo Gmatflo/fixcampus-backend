@@ -5,6 +5,9 @@ import pe.edu.upc.fixcampus.fixcampus.entities.Recomendacion;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
+
 public interface RecomendacionRepository extends JpaRepository<Recomendacion, Long> {
     boolean existsByReporte_IdReporte(Long idReporte);
     
