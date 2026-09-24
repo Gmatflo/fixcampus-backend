@@ -69,6 +69,20 @@ public class CategoriaController {
 
         return ResponseEntity.created(location).body(response);
     }
+    @GetMapping("/buscar-descripcion")
+    @Operation(summary = "Buscar por descripción", description = "Busca categorías que contengan una palabra clave en su descripción.")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
+    public ResponseEntity<List<CategoriaDTOList>> buscarPorDescripcion(
+            @Parameter(description = "Palabra clave a buscar en la descripción") @RequestParam String palabraClave) {
+
+        List<Categoria> categorias = service.buscarPorDescripcion(palabraClave);
+        List<CategoriaDTOList> lista = categorias
+                .stream()
+                .map(categoria -> modelMapper.map(categoria, CategoriaDTOList.class))
+                .toList();
+
+        return ResponseEntity.ok(lista);
+    }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
