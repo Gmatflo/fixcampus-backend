@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public class ReporteDTOInsert {
 
-    @NotNull
     private Long usuarioReportanteId;
 
     private Long tecnicoAsignadoId;

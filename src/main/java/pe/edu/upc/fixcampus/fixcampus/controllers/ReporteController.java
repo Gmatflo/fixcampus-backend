@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOInsert;
@@ -13,6 +14,7 @@ import pe.edu.upc.fixcampus.fixcampus.dtos.IncidenciasPorCampusDTO;
 import pe.edu.upc.fixcampus.fixcampus.dtos.ReporteDTOList;
 import pe.edu.upc.fixcampus.fixcampus.entities.Reporte;
 import pe.edu.upc.fixcampus.fixcampus.servicesinterfaces.ReporteService;
+import pe.edu.upc.fixcampus.fixcampus.repositories.UsuarioRepository;
 
 import java.net.URI;
 import java.util.List;
@@ -22,9 +24,19 @@ import java.util.List;
 public class ReporteController {
 
     private final ReporteService service;
+    private final UsuarioRepository usuarioRepository;
 
-    public ReporteController(ReporteService service) {
+    public ReporteController(ReporteService service, UsuarioRepository usuarioRepository) {
         this.service = service;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @GetMapping("/mis-reportes")
+    @Operation(summary = "Listar mis reportes", description = "Muestra solo las incidencias registradas por la cuenta que inició sesión.")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
+    public List<ReporteDTOList> misReportes(Authentication authentication) {
+        return service.buscarPorCorreoReportante(authentication.getName())
+                .stream().map(this::convertirDto).toList();
     }
 
     @GetMapping
@@ -72,7 +84,11 @@ public class ReporteController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USUARIO')")
-    public ResponseEntity<ReporteDTOList> registrar(@Valid @RequestBody ReporteDTOInsert dto) {
+    public ResponseEntity<ReporteDTOList> registrar(@Valid @RequestBody ReporteDTOInsert dto,
+                                                    Authentication authentication) {
+        Long idUsuario = usuarioRepository.findByCorreo(authentication.getName())
+                .orElseThrow().getIdUsuario();
+        dto.setUsuarioReportanteId(idUsuario);
         Reporte guardado = service.registrar(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

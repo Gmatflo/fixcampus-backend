@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.edu.upc.fixcampus.fixcampus.dtos.LoginRequestDTO;
 import pe.edu.upc.fixcampus.fixcampus.dtos.LoginResponseDTO;
 import pe.edu.upc.fixcampus.fixcampus.securities.JwtTokenService;
+import pe.edu.upc.fixcampus.fixcampus.repositories.UsuarioRepository;
 
 @RestController
 @RequestMapping("/login")
@@ -19,11 +20,14 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
+    private final UsuarioRepository usuarioRepository;
 
     public LoginController(AuthenticationManager authenticationManager,
-                           JwtTokenService jwtTokenService) {
+                           JwtTokenService jwtTokenService,
+                           UsuarioRepository usuarioRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenService = jwtTokenService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @PostMapping
@@ -36,6 +40,8 @@ public class LoginController {
         UserDetails usuario = (UserDetails) authentication.getPrincipal();
         String token = jwtTokenService.generarToken(usuario);
 
-        return ResponseEntity.ok(new LoginResponseDTO(token, usuario.getUsername()));
+        Long idUsuario = usuarioRepository.findByCorreo(usuario.getUsername())
+                .orElseThrow().getIdUsuario();
+        return ResponseEntity.ok(new LoginResponseDTO(token, usuario.getUsername(), idUsuario));
     }
 }
