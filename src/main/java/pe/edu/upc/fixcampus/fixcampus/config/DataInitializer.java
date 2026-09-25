@@ -6,8 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pe.edu.upc.fixcampus.fixcampus.entities.Rol;
 import pe.edu.upc.fixcampus.fixcampus.entities.Usuario;
+import pe.edu.upc.fixcampus.fixcampus.entities.Categoria;
+import pe.edu.upc.fixcampus.fixcampus.entities.Ubicacion;
 import pe.edu.upc.fixcampus.fixcampus.repositories.RolRepository;
 import pe.edu.upc.fixcampus.fixcampus.repositories.UsuarioRepository;
+import pe.edu.upc.fixcampus.fixcampus.repositories.CategoriaRepository;
+import pe.edu.upc.fixcampus.fixcampus.repositories.UbicacionRepository;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +22,9 @@ public class DataInitializer {
     CommandLineRunner crearUsuariosDePrueba(
             UsuarioRepository usuarioRepository,
             RolRepository rolRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            CategoriaRepository categoriaRepository,
+            UbicacionRepository ubicacionRepository) {
         return args -> {
             Rol administrador = crearRol(rolRepository, "ADMIN", "TOTAL");
             Rol usuario = crearRol(rolRepository, "USUARIO", "BASICO");
@@ -29,6 +35,22 @@ public class DataInitializer {
             crearUsuario(usuarioRepository, passwordEncoder,
                     "usuario@fixcampus.com", "usuario123", "Usuario",
                     "FixCampus", usuario);
+
+            if (categoriaRepository.count() == 0) {
+                for (String nombre : new String[]{"Infraestructura", "Electricidad", "Limpieza", "Equipamiento"}) {
+                    Categoria categoria = new Categoria();
+                    categoria.setNombre(nombre);
+                    categoriaRepository.save(categoria);
+                }
+            }
+
+            if (ubicacionRepository.count() == 0) {
+                Ubicacion ubicacion = new Ubicacion();
+                ubicacion.setCampus("San Miguel");
+                ubicacion.setEdificio("General");
+                ubicacion.setTipo("Campus");
+                ubicacionRepository.save(ubicacion);
+            }
         };
     }
 
