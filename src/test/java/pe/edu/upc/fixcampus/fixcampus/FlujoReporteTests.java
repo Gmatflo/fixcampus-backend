@@ -3,8 +3,12 @@ package pe.edu.upc.fixcampus.fixcampus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import pe.edu.upc.fixcampus.fixcampus.repositories.ReporteRepository;
+import pe.edu.upc.fixcampus.fixcampus.repositories.UsuarioRepository;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,11 +25,27 @@ class FlujoReporteTests {
 
     private final ObjectMapper json = new ObjectMapper();
     private final HttpClient client = HttpClient.newHttpClient();
+    private Long reporteCreado;
+    private String correoCreado;
+
+    @Autowired
+    private ReporteRepository reporteRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @AfterEach
+    void limpiarDatosDePrueba() {
+        if (reporteCreado != null) reporteRepository.deleteById(reporteCreado);
+        if (correoCreado != null) usuarioRepository.findByCorreo(correoCreado)
+                .ifPresent(usuarioRepository::delete);
+    }
 
     @Test
     void usuarioSeRegistraYVeSuReporteGuardado() throws Exception {
         String base = "http://localhost:" + port;
         String correo = "prueba" + System.nanoTime() + "@example.com";
+        correoCreado = correo;
         String registro = "{\"nombre\":\"Ana\",\"apellido\":\"Torres\",\"correo\":\""
                 + correo + "\",\"password\":\"clave123\"}";
         assertThat(enviar(base + "/registro", registro, null).statusCode()).isEqualTo(201);
@@ -46,7 +66,9 @@ class FlujoReporteTests {
                 + ",\"ubicacionId\":" + ubicaciones.get(0).get("idUbicacion").asLong()
                 + ",\"titulo\":\"Proyector averiado\",\"descripcion\":\"No enciende\""
                 + ",\"detalleUbicacion\":\"Aula 301\",\"prioridad\":\"MEDIA\",\"estado\":\"ABIERTO\"}";
-        assertThat(enviar(base + "/api/reports", reporte, token).statusCode()).isEqualTo(201);
+        HttpResponse<String> respuestaReporte = enviar(base + "/api/reports", reporte, token);
+        assertThat(respuestaReporte.statusCode()).isEqualTo(201);
+        reporteCreado = json.readTree(respuestaReporte.body()).get("idReporte").asLong();
 
         HttpResponse<String> misReportes = consultar(base + "/api/reports/mis-reportes", token);
         assertThat(misReportes.statusCode()).isEqualTo(200);
